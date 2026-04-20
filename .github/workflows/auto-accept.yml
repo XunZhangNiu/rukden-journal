@@ -45,16 +45,16 @@ jobs:
       - name: 添加文章
         run: |
           NEW_ARTICLE=",
-{
-    id: ${{ steps.id.outputs.new_id }},
-    tag: \"${{ steps.post.outputs.category }}\",
-    title: \"${{ steps.post.outputs.title }}\",
-    authors: \"${{ steps.post.outputs.author }}\",
-    abstract: \"${{ steps.post.outputs.abstract }}\",
-    editorNote: \"🎉 录用自 Discussions | 审稿人: @${{ github.actor }}\",
-    fullContent: \"<p>原文见 GitHub Discussions</p>\",
-    references: \"https://github.com/${{ github.repository }}/discussions/${{ github.event.discussion.number }}\"
-}"
+    {
+        id: ${{ steps.id.outputs.new_id }},
+        tag: \"${{ steps.post.outputs.category }}\",
+        title: \"${{ steps.post.outputs.title }}\",
+        authors: \"${{ steps.post.outputs.author }}\",
+        abstract: \"${{ steps.post.outputs.abstract }}\",
+        editorNote: \"🎉 录用自 Discussions | 审稿人: @${{ github.actor }}\",
+        fullContent: \"<p>原文见 GitHub Discussions</p>\",
+        references: \"https://github.com/${{ github.repository }}/discussions/${{ github.event.discussion.number }}\"
+    }"
           sed -i "/^];/i\\$NEW_ARTICLE" articles.js
 
       - name: 提交更改
