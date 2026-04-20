@@ -37,52 +37,25 @@ jobs:
       - name: 获取新ID
         id: id
         run: |
-          if [ -s articles.js ]; then
-            MAX_ID=$(grep -o '"id": [0-9]*' articles.js | sed 's/"id": //' | sort -nr | head -1)
-          else
-            MAX_ID=0
-          fi
+          MAX_ID=$(grep -o '"id": [0-9]*' articles.js 2>/dev/null | sed 's/"id": //' | sort -nr | head -1)
           [ -z "$MAX_ID" ] && MAX_ID=0
           echo "new_id=$((MAX_ID + 1))" >> $GITHUB_OUTPUT
 
       - name: 添加文章
         run: |
-          # 如果文件是空的或者只有 window.articles = [];，需要先处理
-          if grep -q "window.articles = \[\];" articles.js; then
-            # 空数组情况：替换为带第一条数据的数组
-            cat > articles.js << 'EOF'
-window.articles = [
-    {
-        id: ${{ steps.id.outputs.new_id }},
-        tag: "${{ steps.post.outputs.category }}",
-        title: "${{ steps.post.outputs.title }}",
-        authors: "${{ steps.post.outputs.author }}",
-        abstract: "${{ steps.post.outputs.abstract }}",
-        editorNote: "🎉 录用自 Discussions | 审稿人: @${{ github.actor }}",
-        fullContent: "<p>原文见 GitHub Discussions</p>",
-        references: "https://github.com/${{ github.repository }}/discussions/${{ github.event.discussion.number }}"
-    }
-];
-EOF
-          else
-            # 已有文章：追加新文章
-            sed -i "/^];/i\\
-    {
-        id: ${{ steps.id.outputs.new_id }},
-        tag: \"${{ steps.post.outputs.category }}\",
-        title: \"${{ steps.post.outputs.title }}\",
-        authors: \"${{ steps.post.outputs.author }}\",
-        abstract: \"${{ steps.post.outputs.abstract }}\",
-        editorNote: \"🎉 录用自 Discussions | 审稿人: @${{ github.actor }}\",
-        fullContent: \"<p>原文见 GitHub Discussions</p>\",
-        references: \"https://github.com/${{ github.repository }}/discussions/${{ github.event.discussion.number }}\"
-    }," articles.js
-          fi
+          python3 add_article.py \
+            "${{ steps.id.outputs.new_id }}" \
+            "${{ steps.post.outputs.category }}" \
+            "${{ steps.post.outputs.title }}" \
+            "${{ steps.post.outputs.author }}" \
+            "${{ steps.post.outputs.abstract }}" \
+            "🎉 录用自 Discussions | 审稿人: @${{ github.actor }}" \
+            "https://github.com/${{ github.repository }}/discussions/${{ github.event.discussion.number }}"
 
       - name: 提交更改
         run: |
           git config user.name "RUKDEN Bot"
           git config user.email "bot@rukden.local"
           git add articles.js
-          git commit -m "自动录用: ${{ steps.post.outputs.title }}"
+          git commit -m "自动录用: ${{ steps.post.outputs.title }}" || echo "无变化需要提交"
           git push
