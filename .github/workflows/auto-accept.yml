@@ -10,7 +10,6 @@ permissions:
 
 jobs:
   accept_article:
-    # 只有主编（XunZhangNiu）回复 /accept 或 /录用 才执行
     if: |
       github.event.comment.user.login == 'XunZhangNiu' &&
       (github.event.comment.body == '/accept' || github.event.comment.body == '/录用')
@@ -44,21 +43,21 @@ jobs:
 
       - name: 添加文章
         run: |
-          NEW_ARTICLE=",
-    {
-        id: ${{ steps.id.outputs.new_id }},
-        tag: \"${{ steps.post.outputs.category }}\",
-        title: \"${{ steps.post.outputs.title }}\",
-        authors: \"${{ steps.post.outputs.author }}\",
-        abstract: \"${{ steps.post.outputs.abstract }}\",
-        editorNote: \"🎉 录用自 Discussions | 审稿人: @${{ github.actor }}\",
-        fullContent: \"<p>原文见 GitHub Discussions</p>\",
-        references: \"https://github.com/${{ github.repository }}/discussions/${{ github.event.discussion.number }}\"
-    }"
-          sed -i "/^];/i\\$NEW_ARTICLE" articles.js
+          echo ',' >> articles.js
+          echo '    {' >> articles.js
+          echo '        id: '${{ steps.id.outputs.new_id }}, >> articles.js
+          echo '        tag: "'${{ steps.post.outputs.category }}'",' >> articles.js
+          echo '        title: "'${{ steps.post.outputs.title }}'",' >> articles.js
+          echo '        authors: "'${{ steps.post.outputs.author }}'",' >> articles.js
+          echo '        abstract: "'${{ steps.post.outputs.abstract }}'",' >> articles.js
+          echo '        editorNote: "🎉 录用自 Discussions | 审稿人: @${{ github.actor }}",' >> articles.js
+          echo '        fullContent: "<p>原文见 GitHub Discussions</p>",' >> articles.js
+          echo '        references: "https://github.com/${{ github.repository }}/discussions/${{ github.event.discussion.number }}"' >> articles.js
+          echo '    }' >> articles.js
 
       - name: 提交更改
         run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config user.name "RUKDEN Bot"
           git config user.email "bot@rukden.local"
           git add articles.js
