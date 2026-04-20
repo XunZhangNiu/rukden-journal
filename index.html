@@ -1,0 +1,331 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>RUKDEN · 非传统古怪数据及错误符号评论</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1c1e;
+            font-family: 'Georgia', 'Times New Roman', '宋体', 'SimHei', 'Microsoft YaHei', serif;
+            color: #e6e3d8;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .journal-header {
+            text-align: center;
+            border-bottom: 2px solid #c9a96e;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .journal-title {
+            font-size: 3.2rem;
+            letter-spacing: 3px;
+            font-weight: 700;
+            font-family: 'Times New Roman', serif;
+            color: #f2e0b0;
+            text-shadow: 1px 1px 0 #5a4a2e;
+        }
+
+        .journal-sub {
+            font-size: 0.85rem;
+            color: #b89a6a;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 8px;
+        }
+
+        .journal-fullname {
+            font-size: 0.75rem;
+            color: #8a7a5a;
+            font-style: italic;
+            margin-top: 6px;
+            border-top: 1px dashed #4a3e2a;
+            display: inline-block;
+            padding-top: 8px;
+        }
+
+        .issn {
+            margin-top: 12px;
+            font-size: 0.7rem;
+            color: #6a5a3a;
+            font-family: monospace;
+        }
+
+        .nav-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1.5rem 0 2rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #3a3528;
+        }
+        .nav-bar a {
+            color: #d4bc8a;
+            text-decoration: none;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            transition: 0.2s;
+        }
+        .nav-bar a:hover {
+            color: #f5cf8e;
+            border-bottom: 1px solid #c9a96e;
+        }
+
+        .article-card {
+            background: #25221c;
+            border-radius: 16px;
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+            border-left: 6px solid #c9a96e;
+            transition: all 0.2s;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.3);
+        }
+        .article-card:hover {
+            border-left-color: #e6c384;
+            background: #2c2821;
+        }
+
+        .section-tag {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #c9a96e;
+            background: #3a3222;
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            margin-bottom: 1rem;
+        }
+
+        .article-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #f5e2bc;
+            line-height: 1.3;
+        }
+
+        .article-authors {
+            font-size: 0.85rem;
+            color: #baa67a;
+            margin-bottom: 1rem;
+            border-bottom: 1px dashed #4a3e2a;
+            padding-bottom: 0.6rem;
+            display: inline-block;
+        }
+
+        .abstract {
+            font-size: 0.95rem;
+            color: #ddd2bc;
+            margin: 1rem 0;
+            line-height: 1.5;
+            background: #1e1c16;
+            padding: 1rem;
+            border-radius: 12px;
+        }
+
+        .read-more {
+            background: none;
+            border: 1px solid #c9a96e;
+            color: #e2c694;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: monospace;
+            margin-top: 0.5rem;
+        }
+        .read-more:hover {
+            background: #c9a96e22;
+            border-color: #f0cf8a;
+        }
+
+        .full-content {
+            display: none;
+            margin-top: 1.5rem;
+            border-top: 1px solid #3e382a;
+            padding-top: 1.5rem;
+            font-size: 0.92rem;
+            color: #e0d4bc;
+            line-height: 1.55;
+        }
+        .full-content p {
+            margin-bottom: 1rem;
+        }
+        .full-content blockquote {
+            border-left: 3px solid #c9a96e;
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: #cdbc92;
+            font-style: italic;
+        }
+        .ref {
+            font-size: 0.8rem;
+            color: #aa9a72;
+            margin-top: 1rem;
+            border-top: 1px dashed #4a3e2a;
+            padding-top: 0.8rem;
+        }
+
+        .editor-note {
+            background: #2c261c;
+            border-radius: 12px;
+            padding: 0.6rem 1rem;
+            font-size: 0.75rem;
+            color: #d4bc88;
+            margin: 1rem 0 0;
+            font-style: italic;
+        }
+
+        footer {
+            margin-top: 3rem;
+            border-top: 1px solid #3a3528;
+            padding-top: 1.8rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #8a7a5a;
+        }
+
+        .fake-metric {
+            background: #0f0e0a;
+            padding: 0.5rem 1rem;
+            border-radius: 48px;
+            font-size: 0.7rem;
+            display: inline-flex;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+            color: #b89a6a;
+        }
+
+        .contribute-banner {
+            background: linear-gradient(135deg, #2a3a2a 0%, #1a2a1a 100%);
+            border: 1px solid #6a9a4a;
+            border-radius: 20px;
+            padding: 1.2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .contribute-banner a {
+            color: #aada6a;
+            text-decoration: none;
+        }
+
+        .contribute-banner a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 700px) {
+            .container { padding: 1.2rem; }
+            .article-title { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="journal-header">
+        <div class="journal-title">RUKDEN</div>
+        <div class="journal-sub">Review of Unconventional Kooky Data & Erroneous Notations</div>
+        <div class="journal-fullname">"Are you kidding?" — 学术讽刺 · 思想实验 · 边界探索</div>
+        <div class="issn">E-ISSN 2999-RUK0 | 影响因子: 0.000 | 虚构期刊·讽刺项目</div>
+        <div class="fake-metric">
+            <span>📅 创刊号 · 2026</span>
+            <span>🔓 钻石开放获取</span>
+            <span>🧪 审稿标准: 越离谱越录用</span>
+        </div>
+    </div>
+
+    <div class="nav-bar">
+        <a href="#">首页</a>
+        <a href="https://github.com/XunZhangNiu/rukden-journal/discussions" target="_blank">📮 投稿预印本</a>
+        <a href="https://github.com/XunZhangNiu/rukden-journal" target="_blank">📦 GitHub仓库</a>
+        <a href="#howto">📖 如何投稿</a>
+        <a href="#about">关于本刊</a>
+    </div>
+
+    <div class="contribute-banner" id="howto">
+        🎉 <strong>你也来编乐子！</strong> 🎉<br>
+        📝 去 <a href="https://github.com/XunZhangNiu/rukden-journal/discussions" target="_blank"><strong>GitHub Discussions</strong></a> 发帖投稿<br>
+        👀 或者 Fork 本仓库 → 加文章 → 提交 Pull Request<br>
+        💬 审稿人会在评论区给你写毒舌意见<br>
+        ✅ 录用后，你的名字会出现在正刊！
+    </div>
+
+    <div id="articles-container"></div>
+
+    <div style="background: #1e1b14; border-radius: 28px; padding: 1.5rem; margin: 2rem 0; border: 1px solid #5a4e32;" id="about">
+        <div style="font-size: 0.9rem; font-weight: bold; color: #c9a96e;">📜 投稿须知（讽刺声明）</div>
+        <div style="font-size: 0.8rem; margin-top: 8px; color: #b6a67a;">
+            《RUKDEN》是一本纯粹的讽刺虚构期刊，不收取版面费，不承诺同行评审。<br>
+        </div>
+        <div style="margin-top: 12px; font-size: 0.7rem; text-align: right; color: #8a7a5a;">
+            RUKDEN 编辑部 · 开源项目
+        </div>
+    </div>
+
+    <footer>
+        © 2026 RUKDEN · 虚构学术项目 · 纯属搞笑<br>
+        <a href="https://github.com/XunZhangNiu/rukden-journal" style="color: #8a7a5a;">GitHub 仓库</a> | 
+        <a href="https://github.com/XunZhangNiu/rukden-journal/discussions" style="color: #8a7a5a;">投稿讨论区</a>
+    </footer>
+</div>
+
+<script src="articles.js"></script>
+<script>
+    function renderArticles() {
+        const container = document.getElementById('articles-container');
+        if (!container) return;
+        if (!window.articles || window.articles.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:3rem;">📭 暂无文章，快去投稿吧！</div>';
+            return;
+        }
+        container.innerHTML = window.articles.map(article => `
+            <div class="article-card">
+                <div class="section-tag">${escapeHtml(article.tag)}</div>
+                <div class="article-title">${escapeHtml(article.title)}</div>
+                <div class="article-authors">${escapeHtml(article.authors)}</div>
+                <div class="abstract"><strong>摘要</strong> ${escapeHtml(article.abstract)}</div>
+                ${article.editorNote ? `<div class="editor-note">✍️ ${escapeHtml(article.editorNote)}</div>` : ''}
+                <button class="read-more" data-id="${article.id}">📖 展开全文</button>
+                <div id="full-${article.id}" class="full-content">
+                    ${article.fullContent || ''}
+                    ${article.references ? `<div class="ref">${escapeHtml(article.references)}</div>` : ''}
+                </div>
+            </div>
+        `).join('');
+        document.querySelectorAll('.read-more').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const fullDiv = document.getElementById(`full-${id}`);
+                if (fullDiv.style.display === 'none' || !fullDiv.style.display) {
+                    fullDiv.style.display = 'block';
+                    this.textContent = '📖 收起全文';
+                } else {
+                    fullDiv.style.display = 'none';
+                    this.textContent = '📖 展开全文';
+                }
+            });
+        });
+    }
+    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+    renderArticles();
+</script>
+</body>
+</html>
