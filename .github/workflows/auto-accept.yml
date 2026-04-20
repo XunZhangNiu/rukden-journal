@@ -1,0 +1,66 @@
+name: 自动录用投稿（仅限主编）
+
+on:
+  discussion_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  discussions: write
+
+jobs:
+  accept_article:
+    # 只有主编（XunZhangNiu）回复 /accept 或 /录用 才执行
+    if: |
+      github.event.comment.user.login == 'XunZhangNiu' &&
+      (github.event.comment.body == '/accept' || github.event.comment.body == '/录用')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 获取投稿信息
+        id: post
+        run: |
+          BODY="${{ github.event.discussion.body }}"
+          TITLE="${{ github.event.discussion.title }}"
+          AUTHOR=$(echo "$BODY" | grep -A1 "## 作者" | tail -1 | sed 's/^[[:space:]]*//')
+          [ -z "$AUTHOR" ] && AUTHOR="匿名网友"
+          CATEGORY=$(echo "$BODY" | grep -A1 "## 分类" | tail -1 | sed 's/^[[:space:]]*//')
+          [ -z "$CATEGORY" ] && CATEGORY="📄 论著"
+          ABSTRACT=$(echo "$BODY" | sed -n '/## 摘要/,/## 全文/p' | sed '1d;$d' | tr '\n' ' ')
+          echo "title=$TITLE" >> $GITHUB_OUTPUT
+          echo "author=$AUTHOR" >> $GITHUB_OUTPUT
+          echo "category=$CATEGORY" >> $GITHUB_OUTPUT
+          echo "abstract=$ABSTRACT" >> $GITHUB_OUTPUT
+
+      - name: 获取新ID
+        id: id
+        run: |
+          MAX_ID=$(grep -o '"id": [0-9]*' articles.js | sed 's/"id": //' | sort -nr | head -1)
+          [ -z "$MAX_ID" ] && MAX_ID=0
+          echo "new_id=$((MAX_ID + 1))" >> $GITHUB_OUTPUT
+
+      - name: 添加文章
+        run: |
+          NEW_ARTICLE=",
+{
+    id: ${{ steps.id.outputs.new_id }},
+    tag: \"${{ steps.post.outputs.category }}\",
+    title: \"${{ steps.post.outputs.title }}\",
+    authors: \"${{ steps.post.outputs.author }}\",
+    abstract: \"${{ steps.post.outputs.abstract }}\",
+    editorNote: \"🎉 录用自 Discussions | 审稿人: @${{ github.actor }}\",
+    fullContent: \"<p>原文见 GitHub Discussions</p>\",
+    references: \"https://github.com/${{ github.repository }}/discussions/${{ github.event.discussion.number }}\"
+}"
+          sed -i "/^];/i\\$NEW_ARTICLE" articles.js
+
+      - name: 提交更改
+        run: |
+          git config user.name "RUKDEN Bot"
+          git config user.email "bot@rukden.local"
+          git add articles.js
+          git commit -m "自动录用: ${{ steps.post.outputs.title }}"
+          git push
